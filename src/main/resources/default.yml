@@ -1,0 +1,5 @@
+---
+server:
+  baseUrl: "http://localhost:8080"
+couchdb:
+  baseUrl: "http://localhost:5984"
