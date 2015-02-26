@@ -6,12 +6,10 @@ import retrofit.http.Body;
 import retrofit.http.PUT;
 import retrofit.http.Path;
 
-import java.util.UUID;
-
 public interface Database {
     @PUT("/sentry")
     Response createDatabase();
 
     @PUT("/sentry/{id}")
-    Response createBuild(@Path("id") UUID id, @Body Build build);
+    Response createBuild(@Path("id") String id, @Body Build build);
 }

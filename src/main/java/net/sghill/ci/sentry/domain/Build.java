@@ -7,14 +7,12 @@ import lombok.ToString;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
-import java.util.UUID;
-
 @Getter
 @ToString
-@EqualsAndHashCode(exclude = {"id", "auditInfo"})
+@EqualsAndHashCode(exclude = {"auditInfo"})
 @RequiredArgsConstructor
 public class Build {
-    private final UUID id;
+    private final String id;
     private final String name;
     private final String run;
     private final Duration duration;

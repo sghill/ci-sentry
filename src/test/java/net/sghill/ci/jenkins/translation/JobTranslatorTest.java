@@ -5,10 +5,9 @@ import net.sghill.ci.jenkins.api.JenkinsBuild;
 import net.sghill.ci.jenkins.api.JenkinsBuildResult;
 import net.sghill.ci.jenkins.api.JenkinsJob;
 import net.sghill.ci.sentry.audit.Auditor;
+import net.sghill.ci.sentry.audit.Clock;
 import net.sghill.ci.sentry.domain.Build;
 import net.sghill.ci.sentry.domain.BuildResult;
-import net.sghill.ci.sentry.identity.IdentityProvider;
-import net.sghill.ci.sentry.audit.Clock;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
@@ -17,7 +16,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import java.util.Set;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -30,8 +28,6 @@ public class JobTranslatorTest {
     @Mock
     private Clock clock;
     @Mock
-    private IdentityProvider<UUID> identityProvider;
-    @Mock
     private Auditor auditor;
 
     private JobTranslator translator;
@@ -40,15 +36,12 @@ public class JobTranslatorTest {
     public void setUp() {
         initMocks(this);
         given(clock.now()).willReturn(JUNE_20_2010);
-        translator = new JobTranslator(identityProvider, auditor);
+        translator = new JobTranslator(auditor);
     }
 
     @Test
     public void shouldTranslateJobToBuilds() {
         // Given
-        UUID one = UUID.randomUUID();
-        UUID two = UUID.randomUUID();
-        given(identityProvider.newId()).willReturn(one, two);
         JenkinsBuild passed = new JenkinsBuild(false, 10000L, 2L, JenkinsBuildResult.SUCCESS, 999999999L);
         JenkinsBuild failed = new JenkinsBuild(false, 100L, 3L, JenkinsBuildResult.FAILURE, 77777777L);
         JenkinsJob job = new JenkinsJob("some-jenkins-job", Lists.newArrayList(passed, failed));
@@ -57,11 +50,10 @@ public class JobTranslatorTest {
         Set<Build> builds = translator.translate(job);
 
         // Then
-        verify(identityProvider, times(2)).newId();
         verify(auditor, times(2)).stamp();
         assertThat(builds).containsOnly(
                 new Build(
-                        null, // Id is not part of equals
+                        "some-jenkins-job:2",
                         "some-jenkins-job",
                         "2",
                         new Duration(10000L),
@@ -70,7 +62,7 @@ public class JobTranslatorTest {
                         1,
                         null), // AuditInfo not part of equals
                 new Build(
-                        null,
+                        "some-jenkins-job:3",
                         "some-jenkins-job",
                         "3",
                         new Duration(100L),
