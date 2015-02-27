@@ -80,7 +80,12 @@ public class SentryModule {
     }
 
     @Provides
-    ArgParser<ArgumentParser> providesArgumentParser() {
-        return new ArgParse4JArgParser();
+    ArgParser<ArgumentParser> providesArgumentParser(Package pkg) {
+        return new ArgParse4JArgParser(pkg);
+    }
+
+    @Provides
+    Package providesPackage() {
+        return getClass().getPackage();
     }
 }
