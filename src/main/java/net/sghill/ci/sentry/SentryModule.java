@@ -60,23 +60,23 @@ public class SentryModule {
     }
 
     @Provides
-    net.sghill.ci.sentry.JenkinsService providesRestAdapter(RestAdapter.Builder builder, SentryConfiguration configuration) {
+    JenkinsService providesRestAdapter(RestAdapter.Builder builder, SentryConfiguration configuration) {
         return builder
                 .setEndpoint(configuration.getServer().getBaseUrl())
                 .setConverter(new JacksonConverter())
                 .build()
-                .create(net.sghill.ci.sentry.JenkinsService.class);
+                .create(JenkinsService.class);
     }
 
     @Provides
-    net.sghill.ci.sentry.Database providesDatabase(RestAdapter.Builder builder, SentryConfiguration configuration) {
+    Database providesDatabase(RestAdapter.Builder builder, SentryConfiguration configuration) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
         return builder
                 .setEndpoint(configuration.getCouchdb().getBaseUrl())
                 .setConverter(new JacksonConverter(objectMapper))
                 .build()
-                .create(net.sghill.ci.sentry.Database.class);
+                .create(Database.class);
     }
 
     @Provides
