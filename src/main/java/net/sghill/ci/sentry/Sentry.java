@@ -1,28 +1,27 @@
 package net.sghill.ci.sentry;
 
 import com.google.common.io.Resources;
-import net.sghill.ci.jenkins.api.JenkinsBuild;
 import dagger.ObjectGraph;
+import net.sghill.ci.sentry.cli.ArgParser;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.Namespace;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Sentry {
     @Inject
-    JenkinsService jenkins;
+    ArgParser<ArgumentParser> parser;
 
     public static void main(String[] args) throws Exception {
         new Sentry().run(args);
     }
 
-    public void run(String[] args) throws URISyntaxException {
-        Path configuration = Paths.get(Resources.getResource("default.yml").toURI());
-        ObjectGraph.create(new SentryModule(configuration.toFile())).inject(this);
-        for (JenkinsBuild build : jenkins.fetchJobByName("long-job").getBuilds()) {
-            System.out.println(build);
-        }
-
+    public void run(String[] args) throws URISyntaxException, ArgumentParserException {
+        File configuration = new File(Resources.getResource("default.yml").getPath());
+        ObjectGraph.create(new SentryModule(configuration)).inject(this);
+        Namespace namespace = parser.create().parseArgs(args);
     }
 }

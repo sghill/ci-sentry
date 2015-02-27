@@ -8,6 +8,9 @@ import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.jackson.Jackson;
+import net.sghill.ci.sentry.cli.ArgParse4JArgParser;
+import net.sghill.ci.sentry.cli.ArgParser;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
 import org.hibernate.validator.HibernateValidator;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
@@ -18,7 +21,7 @@ import javax.validation.ValidatorFactory;
 import java.io.File;
 import java.io.IOException;
 
-@Module(injects = net.sghill.ci.sentry.Sentry.class, library = true)
+@Module(injects = Sentry.class, library = true)
 public class SentryModule {
     private final File configurationFile;
 
@@ -74,5 +77,10 @@ public class SentryModule {
                 .setConverter(new JacksonConverter(objectMapper))
                 .build()
                 .create(net.sghill.ci.sentry.Database.class);
+    }
+
+    @Provides
+    ArgParser<ArgumentParser> providesArgumentParser() {
+        return new ArgParse4JArgParser();
     }
 }
