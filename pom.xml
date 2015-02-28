@@ -13,6 +13,7 @@
         <jdk.version>1.7</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.report.outputEncoding>UTF-8</project.report.outputEncoding>
+        <maven.buildNumber.doCheck>false</maven.buildNumber.doCheck>
         <!-- Compile Versions -->
         <argparse4j.version>0.4.4</argparse4j.version>
         <dagger.version>1.2.2</dagger.version>
@@ -219,10 +220,19 @@
                 </executions>
                 <configuration>
                     <shortRevisionLength>10</shortRevisionLength>
-                    <doCheck>true</doCheck>
+                    <doCheck>${maven.buildNumber.doCheck}</doCheck>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <properties>
+                <maven.buildNumber.doCheck>true</maven.buildNumber.doCheck>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
