@@ -7,29 +7,38 @@ import dagger.Provides;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
+import io.dropwizard.configuration.UrlConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
 import net.sghill.ci.sentry.cli.ArgParse4JArgParser;
 import net.sghill.ci.sentry.cli.ArgParser;
+import net.sghill.ci.sentry.cli.Formatter;
+import net.sghill.ci.sentry.cli.actions.ping.PingAction;
+import net.sghill.ci.sentry.cli.actions.ping.PingResult;
+import net.sghill.ci.sentry.cli.actions.ping.PingResultFormatter;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import org.hibernate.validator.HibernateValidator;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import retrofit.converter.JacksonConverter;
 
+import javax.inject.Singleton;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
-@Module(injects = Sentry.class, library = true)
+@Module(library = true,
+        injects = {
+                Sentry.class
+        })
 public class SentryModule {
-    private final File configurationFile;
+    private final URL configurationFile;
 
-    public SentryModule(File configurationFile) {
+    public SentryModule(URL configurationFile) {
         this.configurationFile = configurationFile;
     }
 
-    @Provides
+    @Provides @Singleton
     ValidatorFactory providesValidatorFactory() {
         return Validation.byProvider(HibernateValidator.class).configure().buildValidatorFactory();
     }
@@ -43,10 +52,10 @@ public class SentryModule {
                 "sentry");
     }
 
-    @Provides
+    @Provides @Singleton
     SentryConfiguration providesConfiguration(ConfigurationFactory<SentryConfiguration> configurationFactory) {
         try {
-            return configurationFactory.build(configurationFile);
+            return configurationFactory.build(new UrlConfigurationSourceProvider(), configurationFile.toString());
         } catch (IOException | ConfigurationException e) {
             throw new RuntimeException(e);
         }
@@ -80,12 +89,22 @@ public class SentryModule {
     }
 
     @Provides
-    ArgParser<ArgumentParser> providesArgumentParser(Package pkg) {
-        return new ArgParse4JArgParser(pkg);
+    ArgParser<ArgumentParser> providesArgumentParser(Package pkg, PingAction pingAction) {
+        return new ArgParse4JArgParser(pkg, pingAction);
     }
 
     @Provides
+    PingAction providesPingAction(JenkinsService jenkins, Database database, Formatter<PingResult> formatter) {
+        return new PingAction(jenkins, database, formatter);
+    }
+
+    @Provides @Singleton
     Package providesPackage() {
         return getClass().getPackage();
+    }
+
+    @Provides @Singleton
+    Formatter<PingResult> providesPingResultFormatter() {
+        return new PingResultFormatter();
     }
 }

@@ -1,0 +1,39 @@
+package net.sghill.ci.sentry.cli.actions.ping;
+
+import com.google.common.collect.Sets;
+import lombok.RequiredArgsConstructor;
+import net.sghill.ci.sentry.Database;
+import net.sghill.ci.sentry.JenkinsService;
+import net.sghill.ci.sentry.cli.Formatter;
+import net.sourceforge.argparse4j.inf.Argument;
+import net.sourceforge.argparse4j.inf.ArgumentAction;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+
+@RequiredArgsConstructor
+public class PingAction implements ArgumentAction {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PingAction.class);
+    private final JenkinsService jenkins;
+    private final Database database;
+    private final Formatter<PingResult> formatter;
+
+    @Override
+    public void run(ArgumentParser parser, Argument arg, Map<String, Object> attrs, String flag, Object value) throws ArgumentParserException {
+        PingResult ci = PingResult.fromCiResponse(jenkins.ping());
+        PingResult db = PingResult.fromDbResponse(database.ping());
+        LOGGER.info(formatter.format(Sets.newHashSet(ci, db)));
+    }
+
+    @Override
+    public void onAttach(Argument arg) {
+    }
+
+    @Override
+    public boolean consumeArgument() {
+        return false;
+    }
+}

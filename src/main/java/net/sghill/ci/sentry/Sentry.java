@@ -8,7 +8,6 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.net.URISyntaxException;
 
 public class Sentry {
@@ -20,8 +19,7 @@ public class Sentry {
     }
 
     public void run(String[] args) throws URISyntaxException, ArgumentParserException {
-        File configuration = new File(Resources.getResource("default.yml").getPath());
-        ObjectGraph.create(new SentryModule(configuration)).inject(this);
+        ObjectGraph.create(new SentryModule(Resources.getResource("default.yml"))).inject(this);
         Namespace namespace = parser.create().parseArgs(args);
     }
 }
