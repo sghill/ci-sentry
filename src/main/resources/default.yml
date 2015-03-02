@@ -1,5 +1,7 @@
 ---
 server:
   baseUrl: "http://localhost:8080"
+  restLogLevel: NONE
 couchdb:
   baseUrl: "http://localhost:5984"
+  restLogLevel: NONE

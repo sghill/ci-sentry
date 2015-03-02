@@ -17,6 +17,8 @@ import net.sghill.ci.sentry.cli.actions.ping.PingResult;
 import net.sghill.ci.sentry.cli.actions.ping.PingResultFormatter;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import org.hibernate.validator.HibernateValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import retrofit.converter.JacksonConverter;
@@ -32,6 +34,7 @@ import java.net.URL;
                 Sentry.class
         })
 public class SentryModule {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SentryModule.class);
     private final URL configurationFile;
 
     public SentryModule(URL configurationFile) {
@@ -65,14 +68,21 @@ public class SentryModule {
     RestAdapter.Builder providesRestAdapterBuilder() {
         return new RestAdapter.Builder()
                 .setClient(new OkClient())
-                .setLogLevel(RestAdapter.LogLevel.FULL);
+                .setLog(new RestAdapter.Log() {
+                    @Override
+                    public void log(String message) {
+                        LOGGER.info(message);
+                    }
+                });
     }
 
     @Provides
     JenkinsService providesRestAdapter(RestAdapter.Builder builder, SentryConfiguration configuration) {
+        SentryConfiguration.Server server = configuration.getServer();
         return builder
-                .setEndpoint(configuration.getServer().getBaseUrl())
+                .setEndpoint(server.getBaseUrl())
                 .setConverter(new JacksonConverter())
+                .setLogLevel(RestAdapter.LogLevel.valueOf(server.getRestLogLevel()))
                 .build()
                 .create(JenkinsService.class);
     }
@@ -81,9 +91,11 @@ public class SentryModule {
     Database providesDatabase(RestAdapter.Builder builder, SentryConfiguration configuration) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+        SentryConfiguration.CouchDb couchDb = configuration.getCouchdb();
         return builder
-                .setEndpoint(configuration.getCouchdb().getBaseUrl())
+                .setEndpoint(couchDb.getBaseUrl())
                 .setConverter(new JacksonConverter(objectMapper))
+                .setLogLevel(RestAdapter.LogLevel.valueOf(couchDb.getRestLogLevel()))
                 .build()
                 .create(Database.class);
     }
