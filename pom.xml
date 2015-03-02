@@ -20,10 +20,10 @@
         <dropwizard.version>0.7.1</dropwizard.version>
         <guava.version>18.0</guava.version>
         <jackson.version>2.3.3</jackson.version>
+        <logback.version>1.1.2</logback.version>
         <lombok.version>1.16.0</lombok.version>
         <okhttp.version>2.2.0</okhttp.version>
         <retrofit.version>1.7.1</retrofit.version>
-        <slf4j.version>1.7.7</slf4j.version>
         <!-- Test Versions -->
         <assertj.version>1.7.1</assertj.version>
         <junit.version>4.11</junit.version>
@@ -64,9 +64,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
