@@ -167,7 +167,7 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                         <manifestEntries>
-                            <Implementation-Version>${version} (${buildNumber})</Implementation-Version>
+                            <Implementation-Version>${project.version} (${buildNumber})</Implementation-Version>
                         </manifestEntries>
                     </archive>
                 </configuration>
