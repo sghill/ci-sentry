@@ -1,4 +1,4 @@
-package net.sghill.ci.sentry;
+package net.sghill.ci.sentry.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

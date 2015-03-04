@@ -6,6 +6,7 @@
     </appender>
 
     <logger name="net.sghill.ci" level="INFO"/>
+    <logger name="Sentry" level="INFO"/>
     <root level="WARN">
         <appender-ref ref="STDOUT"/>
     </root>

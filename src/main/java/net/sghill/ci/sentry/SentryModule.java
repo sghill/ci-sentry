@@ -2,9 +2,9 @@ package net.sghill.ci.sentry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import dagger.Module;
 import dagger.Provides;
-import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.UrlConfigurationSourceProvider;
@@ -12,9 +12,14 @@ import io.dropwizard.jackson.Jackson;
 import net.sghill.ci.sentry.cli.ArgParse4JArgParser;
 import net.sghill.ci.sentry.cli.ArgParser;
 import net.sghill.ci.sentry.cli.Formatter;
+import net.sghill.ci.sentry.cli.actions.init.InitConfigAction;
 import net.sghill.ci.sentry.cli.actions.ping.PingAction;
 import net.sghill.ci.sentry.cli.actions.ping.PingResult;
 import net.sghill.ci.sentry.cli.actions.ping.PingResultFormatter;
+import net.sghill.ci.sentry.config.JavaPropertySystemConfiguration;
+import net.sghill.ci.sentry.config.SentryConfiguration;
+import net.sghill.ci.sentry.config.SystemConfiguration;
+import net.sghill.ci.sentry.config.YamlConfigurationWriter;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
@@ -46,8 +51,13 @@ public class SentryModule {
         return Validation.byProvider(HibernateValidator.class).configure().buildValidatorFactory();
     }
 
-    @Provides
-    ConfigurationFactory<SentryConfiguration> providesSentryConfiguration(ValidatorFactory validatorFactory) {
+    @Provides @Singleton
+    ObjectMapper providesObjectMapper() {
+        return new ObjectMapper(new YAMLFactory());
+    }
+
+    @Provides @Singleton
+    ConfigurationFactory <SentryConfiguration> providesSentryConfiguration(ValidatorFactory validatorFactory) {
         return new DefaultConfigurationFactoryFactory<SentryConfiguration>().create(
                 SentryConfiguration.class,
                 validatorFactory.getValidator(),
@@ -59,7 +69,7 @@ public class SentryModule {
     SentryConfiguration providesConfiguration(ConfigurationFactory<SentryConfiguration> configurationFactory) {
         try {
             return configurationFactory.build(new UrlConfigurationSourceProvider(), configurationFile.toString());
-        } catch (IOException | ConfigurationException e) {
+        } catch (IOException | io.dropwizard.configuration.ConfigurationException e) {
             throw new RuntimeException(e);
         }
     }
@@ -101,8 +111,13 @@ public class SentryModule {
     }
 
     @Provides
-    ArgParser<ArgumentParser> providesArgumentParser(Package pkg, PingAction pingAction) {
-        return new ArgParse4JArgParser(pkg, pingAction);
+    ArgParser<ArgumentParser> providesArgumentParser(Package pkg, PingAction pingAction, ObjectMapper om, SentryConfiguration configuration, Logger logger) {
+        return new ArgParse4JArgParser(pkg, pingAction, new InitConfigAction(logger, new JavaPropertySystemConfiguration(), new YamlConfigurationWriter(new StandardFileSystem(), om, configuration)));
+    }
+
+    @Provides
+    Logger providesLogger() {
+        return LoggerFactory.getLogger("Sentry");
     }
 
     @Provides
@@ -118,5 +133,10 @@ public class SentryModule {
     @Provides @Singleton
     Formatter<PingResult> providesPingResultFormatter() {
         return new PingResultFormatter();
+    }
+
+    @Provides @Singleton
+    SystemConfiguration providesSystemConfiguration() {
+        return new JavaPropertySystemConfiguration();
     }
 }
