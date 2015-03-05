@@ -2,8 +2,7 @@ package net.sghill.ci.sentry;
 
 import com.google.common.io.Resources;
 import dagger.ObjectGraph;
-import net.sghill.ci.sentry.cli.ArgParser;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sghill.ci.sentry.cli.ArgParse4JArgParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 
@@ -12,7 +11,7 @@ import java.net.URISyntaxException;
 
 public class Sentry {
     @Inject
-    ArgParser<ArgumentParser> parser;
+    ArgParse4JArgParser parser;
 
     public static void main(String[] args) throws Exception {
         new Sentry().run(args);

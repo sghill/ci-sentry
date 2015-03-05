@@ -1,7 +1,6 @@
 package net.sghill.ci.sentry.cli.actions.ping;
 
 import com.google.common.collect.Sets;
-import lombok.RequiredArgsConstructor;
 import net.sghill.ci.sentry.Database;
 import net.sghill.ci.sentry.JenkinsService;
 import net.sghill.ci.sentry.cli.Formatter;
@@ -12,14 +11,21 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.util.Map;
 
-@RequiredArgsConstructor
 public class PingAction implements ArgumentAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(PingAction.class);
     private final JenkinsService jenkins;
     private final Database database;
     private final Formatter<PingResult> formatter;
+
+    @Inject
+    public PingAction(JenkinsService jenkins, Database database, Formatter<PingResult> formatter) {
+        this.jenkins = jenkins;
+        this.database = database;
+        this.formatter = formatter;
+    }
 
     @Override
     public void run(ArgumentParser parser, Argument arg, Map<String, Object> attrs, String flag, Object value) throws ArgumentParserException {

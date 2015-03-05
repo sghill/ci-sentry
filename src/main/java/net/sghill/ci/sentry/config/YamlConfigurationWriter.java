@@ -1,18 +1,24 @@
 package net.sghill.ci.sentry.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import net.sghill.ci.sentry.FileSystem;
 import net.sghill.ci.sentry.cli.actions.init.InitConfigResult;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Path;
 
-@RequiredArgsConstructor
 public class YamlConfigurationWriter implements ConfigurationWriter {
     private final FileSystem fileSystem;
     private final ObjectMapper objectMapper;
     private final SentryConfiguration configuration;
+
+    @Inject
+    public YamlConfigurationWriter(FileSystem fileSystem, ObjectMapper objectMapper, SentryConfiguration configuration) {
+        this.fileSystem = fileSystem;
+        this.objectMapper = objectMapper;
+        this.configuration = configuration;
+    }
 
     @Override
     public InitConfigResult writeDefaultConfigurationTo(Path path) {

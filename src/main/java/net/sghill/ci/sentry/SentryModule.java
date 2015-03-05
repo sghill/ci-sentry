@@ -10,17 +10,12 @@ import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.UrlConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
 import net.sghill.ci.sentry.cli.ArgParse4JArgParser;
-import net.sghill.ci.sentry.cli.ArgParser;
 import net.sghill.ci.sentry.cli.Formatter;
 import net.sghill.ci.sentry.cli.actions.init.InitConfigAction;
 import net.sghill.ci.sentry.cli.actions.ping.PingAction;
 import net.sghill.ci.sentry.cli.actions.ping.PingResult;
 import net.sghill.ci.sentry.cli.actions.ping.PingResultFormatter;
-import net.sghill.ci.sentry.config.JavaPropertySystemConfiguration;
-import net.sghill.ci.sentry.config.SentryConfiguration;
-import net.sghill.ci.sentry.config.SystemConfiguration;
-import net.sghill.ci.sentry.config.YamlConfigurationWriter;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sghill.ci.sentry.config.*;
 import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +31,11 @@ import java.net.URL;
 
 @Module(library = true,
         injects = {
-                Sentry.class
+                ArgParse4JArgParser.class,
+                InitConfigAction.class,
+                PingAction.class,
+                Sentry.class,
+                YamlConfigurationWriter.class
         })
 public class SentryModule {
     private static final Logger LOGGER = LoggerFactory.getLogger(SentryModule.class);
@@ -111,18 +110,18 @@ public class SentryModule {
     }
 
     @Provides
-    ArgParser<ArgumentParser> providesArgumentParser(Package pkg, PingAction pingAction, ObjectMapper om, SentryConfiguration configuration, Logger logger) {
-        return new ArgParse4JArgParser(pkg, pingAction, new InitConfigAction(logger, new JavaPropertySystemConfiguration(), new YamlConfigurationWriter(new StandardFileSystem(), om, configuration)));
-    }
-
-    @Provides
     Logger providesLogger() {
         return LoggerFactory.getLogger("Sentry");
     }
 
     @Provides
-    PingAction providesPingAction(JenkinsService jenkins, Database database, Formatter<PingResult> formatter) {
-        return new PingAction(jenkins, database, formatter);
+    ConfigurationWriter providesConfigurationWriter(YamlConfigurationWriter w) {
+        return w;
+    }
+
+    @Provides
+    FileSystem providesFileSystem() {
+        return new StandardFileSystem();
     }
 
     @Provides @Singleton
