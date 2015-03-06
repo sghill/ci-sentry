@@ -12,6 +12,7 @@ import io.dropwizard.jackson.Jackson;
 import net.sghill.ci.sentry.cli.ArgParse4JArgParser;
 import net.sghill.ci.sentry.cli.Formatter;
 import net.sghill.ci.sentry.cli.actions.init.InitConfigAction;
+import net.sghill.ci.sentry.cli.actions.init.InitDbAction;
 import net.sghill.ci.sentry.cli.actions.ping.PingAction;
 import net.sghill.ci.sentry.cli.actions.ping.PingResult;
 import net.sghill.ci.sentry.cli.actions.ping.PingResultFormatter;
@@ -32,6 +33,8 @@ import java.net.URL;
 @Module(library = true,
         injects = {
                 ArgParse4JArgParser.class,
+                DatabaseService.class,
+                InitDbAction.class,
                 InitConfigAction.class,
                 PingAction.class,
                 Sentry.class,
@@ -137,5 +140,10 @@ public class SentryModule {
     @Provides @Singleton
     SystemConfiguration providesSystemConfiguration() {
         return new JavaPropertySystemConfiguration();
+    }
+
+    @Provides @Singleton
+    SentryConfiguration.CouchDb providesCouchDbConfiguration(SentryConfiguration c) {
+        return c.getCouchdb();
     }
 }
