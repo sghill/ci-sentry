@@ -3,6 +3,7 @@ package net.sghill.ci.sentry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.common.collect.Lists;
 import dagger.Module;
 import dagger.Provides;
 import io.dropwizard.configuration.ConfigurationFactory;
@@ -37,15 +38,22 @@ import java.net.URL;
                 InitDbAction.class,
                 InitConfigAction.class,
                 PingAction.class,
+                PreferentialConfigurationResolver.class,
                 Sentry.class,
+                UserHomeConfigurationResolver.class,
                 YamlConfigurationWriter.class
         })
 public class SentryModule {
     private static final Logger LOGGER = LoggerFactory.getLogger(SentryModule.class);
-    private final URL configurationFile;
 
-    public SentryModule(URL configurationFile) {
-        this.configurationFile = configurationFile;
+    @Provides @Singleton
+    URL providesConfigurationUrl(PreferentialConfigurationResolver resolver) {
+        return resolver.resolve();
+    }
+
+    @Provides @Singleton
+    Iterable<ConfigurationResolver> providesOrderedConfigurationResolvers(UserHomeConfigurationResolver userHome) {
+        return Lists.newArrayList(userHome, new ClasspathDefaultConfigurationResolver());
     }
 
     @Provides @Singleton
@@ -68,7 +76,7 @@ public class SentryModule {
     }
 
     @Provides @Singleton
-    SentryConfiguration providesConfiguration(ConfigurationFactory<SentryConfiguration> configurationFactory) {
+    SentryConfiguration providesConfiguration(ConfigurationFactory<SentryConfiguration> configurationFactory, URL configurationFile) {
         try {
             return configurationFactory.build(new UrlConfigurationSourceProvider(), configurationFile.toString());
         } catch (IOException | io.dropwizard.configuration.ConfigurationException e) {
