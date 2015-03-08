@@ -2,6 +2,7 @@ package net.sghill.ci.sentry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import dagger.Module;
 import dagger.Provides;
@@ -12,7 +13,9 @@ import io.dropwizard.jackson.Jackson;
 import net.sghill.ci.jenkins.translation.JobTranslator;
 import net.sghill.ci.sentry.audit.*;
 import net.sghill.ci.sentry.cli.ArgParse4JArgParser;
+import net.sghill.ci.sentry.cli.Command;
 import net.sghill.ci.sentry.cli.Formatter;
+import net.sghill.ci.sentry.cli.actions.init.InitAction;
 import net.sghill.ci.sentry.cli.actions.init.InitConfigAction;
 import net.sghill.ci.sentry.cli.actions.init.InitDbAction;
 import net.sghill.ci.sentry.cli.actions.ping.PingAction;
@@ -32,11 +35,13 @@ import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 
 @Module(library = true,
         injects = {
                 ArgParse4JArgParser.class,
                 DatabaseService.class,
+                InitAction.class,
                 InitDbAction.class,
                 InitConfigAction.class,
                 JobTranslator.class,
@@ -176,5 +181,14 @@ public class SentryModule {
     @Provides @Singleton
     SentryConfiguration.CouchDb providesCouchDbConfiguration(SentryConfiguration c) {
         return c.getCouchdb();
+    }
+
+    @Provides @Singleton
+    Map<Command, Runnable> providesActionFactory(InitAction init, PingAction ping, RecordBuildsAction record) {
+        return ImmutableMap.of(
+                Command.INIT, init,
+                Command.PING, ping,
+                Command.RECORD, record
+        );
     }
 }

@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Set;
 
-public class RecordBuildsAction extends NoArgAction {
+public class RecordBuildsAction extends NoArgAction implements Runnable {
     public static final String HELP = "save status of all builds";
     private final Logger logger;
     private final JenkinsService jenkins;

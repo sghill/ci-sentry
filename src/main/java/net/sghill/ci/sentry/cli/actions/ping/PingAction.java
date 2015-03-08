@@ -14,7 +14,8 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.util.Map;
 
-public class PingAction implements ArgumentAction {
+public class PingAction implements ArgumentAction, Runnable {
+    public static final String HELP = "ping configured ci and db";
     private static final Logger LOGGER = LoggerFactory.getLogger(PingAction.class);
     private final JenkinsService jenkins;
     private final Database database;
@@ -41,5 +42,14 @@ public class PingAction implements ArgumentAction {
     @Override
     public boolean consumeArgument() {
         return false;
+    }
+
+    @Override
+    public void run() {
+        try {
+            run(null, null, null, null, null);
+        } catch (ArgumentParserException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
