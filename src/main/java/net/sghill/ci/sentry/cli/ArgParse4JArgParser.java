@@ -23,7 +23,9 @@ public class ArgParse4JArgParser implements ArgParser<ArgumentParser> {
     public ArgumentParser create() {
         ArgumentParser parser = ArgumentParsers.newArgumentParser("Sentry");
         parser.version("${prog}: " + pkg.getImplementationVersion());
-        parser.addArgument("-v", "--version").action(Arguments.version());
+        parser.addArgument("-v", "--version")
+                .action(Arguments.version())
+                .help("show application version and exit");
         Subparsers subparsers = parser.addSubparsers().title("subcommands").metavar("COMMAND");
         subparsers.addParser("ping")
                 .setDefault(CMD, Command.PING)
