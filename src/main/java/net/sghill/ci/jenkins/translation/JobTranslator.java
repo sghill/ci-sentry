@@ -10,12 +10,14 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 
+import javax.inject.Inject;
 import java.util.Set;
 
 public class JobTranslator implements Translator<JenkinsJob, Set<Build>> {
     public static final int VERSION = 1;
     private final Auditor auditor;
 
+    @Inject
     public JobTranslator(Auditor auditor) {
         this.auditor = auditor;
     }

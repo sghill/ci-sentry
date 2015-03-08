@@ -1,5 +1,6 @@
 package net.sghill.ci.sentry.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.joda.time.Duration;
 @EqualsAndHashCode(exclude = {"auditInfo"})
 @RequiredArgsConstructor
 public class Build {
+    @JsonProperty("_id")
     private final String id;
     private final String name;
     private final String run;
