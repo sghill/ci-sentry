@@ -33,7 +33,7 @@ public class InitDbActionTest {
         given(databaseService.ensureDatabaseExists()).willReturn(InitDbResult.CREATED);
 
         // When
-        action.run(null, null, null, null, null);
+        action.run();
 
         // Then
         verify(logger).info(InitDbResult.CREATED.getMessageTemplate(), couchDbConfig.getBaseUrl());
@@ -45,7 +45,7 @@ public class InitDbActionTest {
         given(databaseService.ensureDatabaseExists()).willReturn(InitDbResult.ALREADY_EXISTED);
 
         // When
-        action.run(null, null, null, null, null);
+        action.run();
 
         // Then
         verify(logger).info(InitDbResult.ALREADY_EXISTED.getMessageTemplate(), couchDbConfig.getBaseUrl());

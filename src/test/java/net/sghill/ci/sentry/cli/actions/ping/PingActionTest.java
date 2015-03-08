@@ -44,7 +44,7 @@ public class PingActionTest {
                 new PingResult(new URL("http://db/"), PingKind.DB, false));
 
         // When
-        action.run(null, null, null, null, null);
+        action.run();
 
         // Then
         verify(formatter).format(expectedArguments);

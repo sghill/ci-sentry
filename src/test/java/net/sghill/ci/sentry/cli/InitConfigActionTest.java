@@ -39,7 +39,7 @@ public class InitConfigActionTest {
         given(configurationWriter.writeDefaultConfigurationTo(path)).willReturn(InitConfigResult.CREATED);
 
         // When
-        action.run(null, null, null, null, null);
+        action.run();
 
         // Then
         verify(logger).info(InitConfigResult.CREATED.getMessage(), path);
