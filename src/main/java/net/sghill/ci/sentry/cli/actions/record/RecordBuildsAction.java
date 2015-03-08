@@ -5,6 +5,7 @@ import net.sghill.ci.jenkins.translation.JobTranslator;
 import net.sghill.ci.sentry.Database;
 import net.sghill.ci.sentry.JenkinsService;
 import net.sghill.ci.sentry.domain.Build;
+import net.sghill.ci.sentry.domain.Builds;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
@@ -31,10 +32,8 @@ public class RecordBuildsAction implements Runnable {
         Collection<JenkinsJob> jobs = jenkins.fetchAllJobs().getJobs();
         for (JenkinsJob job : jobs) {
             Set<Build> builds = translator.translate(job);
-            for (Build build : builds) {
-                db.createBuild(build.getId(), build);
-                logger.info("created build {}", build.getId());
-            }
+            db.createBuilds(new Builds(builds));
+            logger.info("created builds for job {}", job.getName());
         }
     }
 }
