@@ -1,5 +1,6 @@
 package net.sghill.ci.sentry.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -14,5 +15,10 @@ public class Builds {
 
     public Collection<Build> getDocs() {
         return builds;
+    }
+
+    @JsonProperty("all_or_nothing")
+    public boolean transactionMode() {
+        return true;
     }
 }
