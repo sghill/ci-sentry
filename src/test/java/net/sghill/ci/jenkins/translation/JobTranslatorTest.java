@@ -55,7 +55,7 @@ public class JobTranslatorTest {
                 new Build(
                         "some-jenkins-job:2",
                         "some-jenkins-job",
-                        "2",
+                        2L,
                         new Duration(10000L),
                         new DateTime(999999999L, DateTimeZone.UTC),
                         BuildResult.PASSED,
@@ -64,7 +64,7 @@ public class JobTranslatorTest {
                 new Build(
                         "some-jenkins-job:3",
                         "some-jenkins-job",
-                        "3",
+                        3L,
                         new Duration(100L),
                         new DateTime(77777777L, DateTimeZone.UTC),
                         BuildResult.FAILED,

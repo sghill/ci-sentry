@@ -16,7 +16,7 @@ public class Build {
     @JsonProperty("_id")
     private final String id;
     private final String name;
-    private final String run;
+    private final Long run;
     private final Duration duration;
     private final DateTime completedAt;
     private final BuildResult result;
