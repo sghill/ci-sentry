@@ -6,16 +6,16 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.Collection;
+import java.util.List;
 
 @Getter
 @ToString
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Jenkins {
-    private final Collection<JenkinsJob> jobs;
+    private final List<JenkinsJob> jobs;
 
-    public Jenkins(@JsonProperty("jobs") Collection<JenkinsJob> jobs) {
+    public Jenkins(@JsonProperty("jobs") List<JenkinsJob> jobs) {
         this.jobs = jobs;
     }
 }

@@ -36,6 +36,7 @@ import javax.validation.ValidatorFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.ForkJoinPool;
 
 @Module(library = true,
         injects = {
@@ -55,6 +56,20 @@ import java.util.Map;
         })
 public class SentryModule {
     private static final Logger LOGGER = LoggerFactory.getLogger(SentryModule.class);
+
+    @Provides
+    ForkJoinPool providesPool(final Logger logger) {
+        return new ForkJoinPool(
+                Runtime.getRuntime().availableProcessors(),
+                ForkJoinPool.defaultForkJoinWorkerThreadFactory,
+                new Thread.UncaughtExceptionHandler() {
+                    @Override
+                    public void uncaughtException(Thread t, Throwable e) {
+                        logger.error("exception from fork/join pool", e);
+                    }
+                },
+                true);
+    }
 
     @Provides @Singleton
     URL providesConfigurationUrl(PreferentialConfigurationResolver resolver) {
