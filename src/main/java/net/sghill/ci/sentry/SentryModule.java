@@ -23,6 +23,11 @@ import net.sghill.ci.sentry.cli.actions.ping.PingResult;
 import net.sghill.ci.sentry.cli.actions.ping.PingResultFormatter;
 import net.sghill.ci.sentry.cli.actions.record.RecordBuildsAction;
 import net.sghill.ci.sentry.config.*;
+import org.ektorp.CouchDbConnector;
+import org.ektorp.http.HttpClient;
+import org.ektorp.http.StdHttpClient;
+import org.ektorp.impl.StdCouchDbConnector;
+import org.ektorp.impl.StdCouchDbInstance;
 import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +39,7 @@ import javax.inject.Singleton;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
@@ -41,7 +47,6 @@ import java.util.concurrent.ForkJoinPool;
 @Module(library = true,
         injects = {
                 ArgParse4JArgParser.class,
-                DatabaseService.class,
                 InitAction.class,
                 InitDbAction.class,
                 InitConfigAction.class,
@@ -69,6 +74,18 @@ public class SentryModule {
                     }
                 },
                 true);
+    }
+
+    @Provides
+    CouchDbConnector providesCouchDbConnector(SentryConfiguration.CouchDb config) {
+        try {
+            HttpClient client = new StdHttpClient.Builder()
+                    .url(config.getBaseUrl())
+                    .build();
+            return new StdCouchDbConnector("sentry", new StdCouchDbInstance(client));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Provides @Singleton
