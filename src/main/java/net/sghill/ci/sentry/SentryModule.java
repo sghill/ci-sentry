@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
 import dagger.Module;
 import dagger.Provides;
 import io.dropwizard.configuration.ConfigurationFactory;
@@ -82,7 +85,7 @@ public class SentryModule {
             HttpClient client = new StdHttpClient.Builder()
                     .url(config.getBaseUrl())
                     .build();
-            return new StdCouchDbConnector("sentry", new StdCouchDbInstance(client));
+        return new StdCouchDbConnector("sentry", new StdCouchDbInstance(client));
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -142,10 +145,15 @@ public class SentryModule {
         }
     }
 
+    @Provides @Singleton
+    OkHttpClient providesOkHttpClient() {
+        return new OkHttpClient();
+    }
+
     @Provides
-    RestAdapter.Builder providesRestAdapterBuilder(JacksonConverter converter) {
+    RestAdapter.Builder providesRestAdapterBuilder(JacksonConverter converter, OkHttpClient client) {
         return new RestAdapter.Builder()
-                .setClient(new OkClient())
+                .setClient(new OkClient(client))
                 .setConverter(converter)
                 .setLog(new RestAdapter.Log() {
                     @Override
@@ -222,5 +230,14 @@ public class SentryModule {
                 Command.PING, ping,
                 Command.RECORD, record
         );
+    }
+
+    @Provides
+    Call providesPingRequest(SentryConfiguration.CouchDb config, OkHttpClient client) {
+        Request req = new Request.Builder()
+                .url(config.getBaseUrl())
+                .head()
+                .build();
+        return client.newCall(req);
     }
 }
