@@ -31,6 +31,7 @@ public class JobTranslator implements Translator<JenkinsJob, Set<Build>> {
             }
             builds.add(new Build(
                     String.format("%s:%d", job.getName(), b.getNumber()),
+                    null,
                     job.getName(),
                     b.getNumber(),
                     new Duration(b.getDuration()),

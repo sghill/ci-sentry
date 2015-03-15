@@ -179,16 +179,6 @@ public class SentryModule {
     }
 
     @Provides
-    Database providesDatabase(RestAdapter.Builder builder, SentryConfiguration configuration) {
-        SentryConfiguration.CouchDb couchDb = configuration.getCouchdb();
-        return builder
-                .setEndpoint(couchDb.getBaseUrl())
-                .setLogLevel(RestAdapter.LogLevel.valueOf(couchDb.getRestLogLevel()))
-                .build()
-                .create(Database.class);
-    }
-
-    @Provides
     Logger providesLogger() {
         return LoggerFactory.getLogger("Sentry");
     }

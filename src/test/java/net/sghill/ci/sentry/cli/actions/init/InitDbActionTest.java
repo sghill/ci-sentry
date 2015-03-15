@@ -22,7 +22,7 @@ public class InitDbActionTest {
     @Before
     public void setUp() {
         initMocks(this);
-        couchDbConfig = new SentryConfiguration.CouchDb("http://some-url/", "NONE");
+        couchDbConfig = new SentryConfiguration.CouchDb("http://some-url/");
         action = new InitDbAction(db, couchDbConfig, logger);
     }
 

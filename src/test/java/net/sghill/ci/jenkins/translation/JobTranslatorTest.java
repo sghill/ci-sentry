@@ -54,6 +54,7 @@ public class JobTranslatorTest {
         assertThat(builds).containsOnly(
                 new Build(
                         "some-jenkins-job:2",
+                        null,
                         "some-jenkins-job",
                         2L,
                         new Duration(10000L),
@@ -63,6 +64,7 @@ public class JobTranslatorTest {
                         null), // AuditInfo not part of equals
                 new Build(
                         "some-jenkins-job:3",
+                        null,
                         "some-jenkins-job",
                         3L,
                         new Duration(100L),

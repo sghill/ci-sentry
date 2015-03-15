@@ -1,25 +1,25 @@
 package net.sghill.ci.sentry.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
+@Setter
 @Getter
 @ToString
 @EqualsAndHashCode(exclude = {"auditInfo"})
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class Build {
     @JsonProperty("_id")
-    private final String id;
-    private final String name;
-    private final Long run;
-    private final Duration duration;
-    private final DateTime completedAt;
-    private final BuildResult result;
-    private final Integer version;
-    private final AuditInfo auditInfo;
+    private String id;
+    @JsonProperty("_rev")
+    private String revision;
+    private String name;
+    private Long run;
+    private Duration duration;
+    private DateTime completedAt;
+    private BuildResult result;
+    private Integer version;
+    private AuditInfo auditInfo;
 }

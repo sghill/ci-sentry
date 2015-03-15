@@ -43,14 +43,9 @@ public class SentryConfiguration {
     public static class CouchDb {
         @URL
         private final String baseUrl;
-        @Enumeration(of = RestAdapter.LogLevel.class)
-        private final String restLogLevel;
 
-
-        public CouchDb(@JsonProperty("baseUrl") String baseUrl,
-                       @JsonProperty("restLogLevel") String restLogLevel) {
+        public CouchDb(@JsonProperty("baseUrl") String baseUrl) {
             this.baseUrl = baseUrl;
-            this.restLogLevel = restLogLevel;
         }
     }
 }

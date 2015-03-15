@@ -4,4 +4,3 @@ server:
   restLogLevel: NONE
 couchdb:
   baseUrl: "http://localhost:5984"
-  restLogLevel: NONE
