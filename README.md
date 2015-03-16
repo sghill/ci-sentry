@@ -1,9 +1,11 @@
 CI Sentry
 =========
 
-CI Sentry guards build data for the long haul.
+[![Build Status](https://snap-ci.com/sghill/ci-sentry/branch/master/build_image)](https://snap-ci.com/sghill/ci-sentry/branch/master)
 
-CI is configured to keep a small number of builds for space reasons.
+CI Sentry guards build data.
+
+CI is sometimes configured to keep a small number of builds for space reasons.
 With a long history of data, it becomes easier to see if builds are
 improving with changes to practice and process.
 
