@@ -1,6 +1,9 @@
 package net.sghill.ci.sentry.domain;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.joda.time.DateTime;
 
@@ -8,17 +11,36 @@ import org.joda.time.DateTime;
 @Getter
 @ToString
 @EqualsAndHashCode(exclude = {"auditInfo"})
-@AllArgsConstructor
 public class Build {
     @JsonProperty("_id")
-    private String id;
+    private final String id;
     @JsonProperty("_rev")
-    private String revision;
-    private String name;
-    private Long run;
-    private Long durationInMillis;
-    private DateTime completedAt;
-    private BuildResult result;
-    private Integer version;
-    private AuditInfo auditInfo;
+    private final String revision;
+    private final String name;
+    private final Long run;
+    private final Long durationInMillis;
+    private final DateTime completedAt;
+    private final BuildResult result;
+    private final Integer version;
+    private final AuditInfo auditInfo;
+    private final Type type = Type.BUILD;
+
+    public Build(String id,
+                 String name,
+                 Long run,
+                 Long durationInMillis,
+                 DateTime completedAt,
+                 BuildResult result,
+                 Integer version,
+                 AuditInfo auditInfo) {
+        this.id = id;
+        this.revision = null;
+        this.name = name;
+        this.run = run;
+        this.durationInMillis = durationInMillis;
+        this.completedAt = completedAt;
+        this.result = result;
+        this.version = version;
+        this.auditInfo = auditInfo;
+    }
 }
