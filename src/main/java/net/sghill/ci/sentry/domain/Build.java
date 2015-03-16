@@ -3,7 +3,6 @@ package net.sghill.ci.sentry.domain;
 import lombok.*;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.joda.time.DateTime;
-import org.joda.time.Duration;
 
 @Setter
 @Getter
@@ -17,7 +16,7 @@ public class Build {
     private String revision;
     private String name;
     private Long run;
-    private Duration duration;
+    private Long durationInMillis;
     private DateTime completedAt;
     private BuildResult result;
     private Integer version;

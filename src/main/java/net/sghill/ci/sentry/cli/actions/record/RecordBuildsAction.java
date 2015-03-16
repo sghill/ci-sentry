@@ -51,8 +51,12 @@ public class RecordBuildsAction implements Runnable {
             if (size == 1) {
                 JenkinsJob job = jobs.get(0);
                 Set<Build> builds = translator.translate(job);
-                couch.executeAllOrNothing(builds);
-                logger.info("Recorded {} builds for job '{}'", builds.size(), job.getName());
+                if (builds.isEmpty()) {
+                    logger.info("No new builds found for job '{}'", job.getName());
+                } else {
+                    couch.executeAllOrNothing(builds);
+                    logger.info("Recorded {} builds for job '{}'", builds.size(), job.getName());
+                }
             } else {
                 int half = size / 2;
                 logger.info("Splitting jobs list in half");

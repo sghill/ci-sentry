@@ -26,11 +26,13 @@ import net.sghill.ci.sentry.cli.actions.ping.PingResult;
 import net.sghill.ci.sentry.cli.actions.ping.PingResultFormatter;
 import net.sghill.ci.sentry.cli.actions.record.RecordBuildsAction;
 import net.sghill.ci.sentry.config.*;
+import net.sghill.ci.sentry.domain.BuildRepository;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.http.HttpClient;
 import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbConnector;
 import org.ektorp.impl.StdCouchDbInstance;
+import org.ektorp.impl.StdObjectMapperFactory;
 import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +51,7 @@ import java.util.concurrent.ForkJoinPool;
 
 @Module(library = true,
         injects = {
+                BuildRepository.class,
                 ArgParse4JArgParser.class,
                 InitAction.class,
                 InitDbAction.class,
@@ -85,7 +88,11 @@ public class SentryModule {
             HttpClient client = new StdHttpClient.Builder()
                     .url(config.getBaseUrl())
                     .build();
-        return new StdCouchDbConnector("sentry", new StdCouchDbInstance(client));
+            org.codehaus.jackson.map.ObjectMapper mapper = new org.codehaus.jackson.map.ObjectMapper();
+            mapper.registerModule(new CouchDbSerializationModule());
+            StdObjectMapperFactory mapperFactory = new StdObjectMapperFactory();
+            mapperFactory.setObjectMapper(mapper);
+            return new StdCouchDbConnector("sentry", new StdCouchDbInstance(client, mapperFactory));
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -176,6 +183,16 @@ public class SentryModule {
                 .setLogLevel(RestAdapter.LogLevel.valueOf(server.getRestLogLevel()))
                 .build()
                 .create(JenkinsService.class);
+    }
+
+    @Provides
+    BuildRepository providesBuildRepository(CouchDbConnector connector) {
+        return new BuildRepository(connector);
+    }
+
+    @Provides
+    Map<String, Long> providesMostRecent(BuildRepository repo) {
+        return repo.findMostRecent();
     }
 
     @Provides
