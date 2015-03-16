@@ -6,10 +6,14 @@
 
     <groupId>net.sghill.ci</groupId>
     <artifactId>ci-sentry</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0-SNAPSHOT</version>
+
     <name>CI Sentry</name>
+    <description>Guarding CI Build History</description>
+    <url>https://github.com/sghill/ci-sentry</url>
 
     <properties>
+        <releaseNumber>LOCAL-BUILD</releaseNumber>
         <jdk.version>1.7</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.report.outputEncoding>UTF-8</project.report.outputEncoding>
@@ -37,6 +41,18 @@
         <developerConnection>scm:git:ssh://git@github.com/sghill/ci-sentry.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/sghill/ci-sentry/issues</url>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>Apache 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 
     <dependencyManagement>
         <dependencies>
@@ -174,7 +190,7 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                         <manifestEntries>
-                            <Implementation-Version>${project.version} (${buildNumber})</Implementation-Version>
+                            <Implementation-Version>${releaseNumber}-${buildNumber}</Implementation-Version>
                         </manifestEntries>
                     </archive>
                 </configuration>
