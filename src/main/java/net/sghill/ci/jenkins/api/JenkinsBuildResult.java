@@ -3,7 +3,10 @@ package net.sghill.ci.jenkins.api;
 import net.sghill.ci.sentry.domain.BuildResult;
 
 public enum JenkinsBuildResult {
-    SUCCESS(BuildResult.PASSED), FAILURE(BuildResult.FAILED), ABORTED(BuildResult.CANCELED);
+    SUCCESS(BuildResult.PASSED),
+    FAILURE(BuildResult.FAILED),
+    ABORTED(BuildResult.CANCELED),
+    UNSTABLE(BuildResult.FAILED);
 
     private final BuildResult result;
 
