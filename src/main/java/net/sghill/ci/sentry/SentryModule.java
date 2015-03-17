@@ -88,7 +88,7 @@ public class SentryModule {
             HttpClient client = new StdHttpClient.Builder()
                     .url(config.getBaseUrl())
                     .build();
-            org.codehaus.jackson.map.ObjectMapper mapper = new org.codehaus.jackson.map.ObjectMapper();
+            ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new CouchDbSerializationModule());
             StdObjectMapperFactory mapperFactory = new StdObjectMapperFactory();
             mapperFactory.setObjectMapper(mapper);

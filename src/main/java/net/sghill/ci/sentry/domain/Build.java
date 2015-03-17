@@ -1,10 +1,10 @@
 package net.sghill.ci.sentry.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.joda.time.DateTime;
 
 @Setter
