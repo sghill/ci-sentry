@@ -7,10 +7,7 @@ import retrofit.http.GET;
 import retrofit.http.Path;
 
 public interface JenkinsService {
-    @GET("/job/{name}/api/json?depth=1")
-    JenkinsJob fetchJobByName(@Path("name") String name);
-
-    @GET("/api/json?depth=2")
+    @GET("/api/json?tree=jobs[name,builds[building,duration,number,result,timestamp]]")
     Jenkins fetchAllJobs();
 
     @GET("/api/json")
