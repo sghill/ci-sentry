@@ -50,8 +50,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 
-@Module(library = true,
-        injects = {
+@Module(injects = {
                 BuildRepository.class,
                 ArgParse4JArgParser.class,
                 InitAction.class,
