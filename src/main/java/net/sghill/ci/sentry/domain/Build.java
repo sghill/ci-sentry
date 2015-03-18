@@ -1,5 +1,6 @@
 package net.sghill.ci.sentry.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import org.joda.time.DateTime;
 @Getter
 @ToString
 @EqualsAndHashCode(exclude = {"auditInfo"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Build {
     @JsonProperty("_id")
     private final String id;
