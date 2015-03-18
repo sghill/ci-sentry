@@ -12,16 +12,17 @@ import java.io.IOException;
 
 public class PingAction implements Runnable {
     public static final String HELP = "ping configured ci and db";
-    private static final Logger LOGGER = LoggerFactory.getLogger(PingAction.class);
     private final JenkinsService jenkins;
     private final Call dbPing;
     private final Formatter<PingResult> formatter;
+    private final Logger logger;
 
     @Inject
-    public PingAction(JenkinsService jenkins, Call dbPing, Formatter<PingResult> formatter) {
+    public PingAction(JenkinsService jenkins, Call dbPing, Formatter<PingResult> formatter, Logger logger) {
         this.jenkins = jenkins;
         this.dbPing = dbPing;
         this.formatter = formatter;
+        this.logger = logger;
     }
 
     @Override
@@ -29,7 +30,7 @@ public class PingAction implements Runnable {
         try {
             PingResult ci = PingResult.fromCiResponse(jenkins.ping());
             PingResult db = PingResult.fromDbResponse(dbPing.execute());
-            LOGGER.info(formatter.format(Sets.newHashSet(ci, db)));
+            logger.info(formatter.format(Sets.newHashSet(ci, db)));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

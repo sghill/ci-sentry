@@ -66,7 +66,6 @@ import java.util.concurrent.ForkJoinPool;
                 YamlConfigurationWriter.class
         })
 public class SentryModule {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SentryModule.class);
 
     @Provides
     ForkJoinPool providesPool(final Logger logger) {
@@ -158,14 +157,14 @@ public class SentryModule {
     }
 
     @Provides
-    RestAdapter.Builder providesRestAdapterBuilder(JacksonConverter converter, OkHttpClient client) {
+    RestAdapter.Builder providesRestAdapterBuilder(JacksonConverter converter, OkHttpClient client, final Logger logger) {
         return new RestAdapter.Builder()
                 .setClient(new OkClient(client))
                 .setConverter(converter)
                 .setLog(new RestAdapter.Log() {
                     @Override
                     public void log(String message) {
-                        LOGGER.info(message);
+                        logger.info(message);
                     }
                 });
     }

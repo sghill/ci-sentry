@@ -11,6 +11,7 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.slf4j.Logger;
 import retrofit.client.Header;
 import retrofit.client.Response;
 
@@ -29,6 +30,8 @@ public class PingActionTest {
     private Formatter<PingResult> formatter;
     @Mock
     private Call dbPingCall;
+    @Mock
+    private Logger logger;
 
     @Before
     public void setUp() {
@@ -45,7 +48,7 @@ public class PingActionTest {
                 .build();
         given(jenkins.ping()).willReturn(new Response("http://jenkins/", 200, "OK", Lists.<Header>newArrayList(), null));
         given(dbPingCall.execute()).willReturn(response);
-        PingAction action = new PingAction(jenkins, dbPingCall, formatter);
+        PingAction action = new PingAction(jenkins, dbPingCall, formatter, logger);
         Set<PingResult> expectedArguments = Sets.newHashSet(
                 new PingResult(new URL("http://jenkins/"), PingKind.CI, true),
                 new PingResult(new URL("http://db/"), PingKind.DB, false));
