@@ -30,9 +30,10 @@ import net.sghill.ci.sentry.domain.BuildRepository;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.http.HttpClient;
 import org.ektorp.http.StdHttpClient;
+import org.ektorp.impl.ObjectMapperFactory;
 import org.ektorp.impl.StdCouchDbConnector;
 import org.ektorp.impl.StdCouchDbInstance;
-import org.ektorp.impl.StdObjectMapperFactory;
+import org.ektorp.impl.jackson.EktorpJacksonModule;
 import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,11 +88,20 @@ public class SentryModule {
             HttpClient client = new StdHttpClient.Builder()
                     .url(config.getBaseUrl())
                     .build();
-            ObjectMapper mapper = new ObjectMapper();
+            final ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new CouchDbSerializationModule());
-            StdObjectMapperFactory mapperFactory = new StdObjectMapperFactory();
-            mapperFactory.setObjectMapper(mapper);
-            return new StdCouchDbConnector("sentry", new StdCouchDbInstance(client, mapperFactory));
+            return new StdCouchDbConnector("sentry", new StdCouchDbInstance(client), new ObjectMapperFactory() {
+                @Override
+                public ObjectMapper createObjectMapper() {
+                    return mapper;
+                }
+
+                @Override
+                public ObjectMapper createObjectMapper(CouchDbConnector connector) {
+                    mapper.registerModule(new EktorpJacksonModule(connector, mapper));
+                    return mapper;
+                }
+            });
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
