@@ -5,6 +5,7 @@ import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.ViewResult;
 import org.ektorp.support.CouchDbRepositorySupport;
+import org.ektorp.support.ListFunction;
 import org.ektorp.support.View;
 import org.ektorp.support.Views;
 
@@ -13,11 +14,13 @@ import java.util.Map;
 
 @Views({
         @View(name = "all", map = "function(doc){if(doc.type === 'BUILD'){emit(null,doc._id)}}"),
+        @View(name = "report", file = "/builds/views/report.json"),
         @View(name = "most_recent",
                 map = "function(doc){emit(doc.name,doc.run);}",
                 reduce = "function(k,v,rereduce){var max = 0; v.forEach(function(x){if(x > max) { max = x; }}); return max;}"
         )
 })
+@ListFunction(name = "as-csv", file = "/builds/lists/as-csv.js")
 public class BuildRepository extends CouchDbRepositorySupport<Build> {
     @Inject
     public BuildRepository(CouchDbConnector db) {

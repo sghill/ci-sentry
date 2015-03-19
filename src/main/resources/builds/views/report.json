@@ -1,0 +1,3 @@
+{
+    "map":"function(doc){ emit(doc.name, {name: doc.name, run: doc.run, durationInMillis: doc.durationInMillis, completedAt: doc.completedAt, result: doc.result }); }"
+}
