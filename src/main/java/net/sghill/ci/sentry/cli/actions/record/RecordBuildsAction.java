@@ -59,7 +59,7 @@ public class RecordBuildsAction implements Runnable {
                 }
             } else {
                 int half = size / 2;
-                logger.info("Splitting jobs list in half");
+                logger.debug("Splitting jobs list in half");
                 invokeAll(
                         new RecursiveBuildsAction(jobs.subList(0, half), logger, translator, couch),
                         new RecursiveBuildsAction(jobs.subList(half, size), logger, translator, couch)
