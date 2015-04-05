@@ -1,5 +1,6 @@
 package net.sghill.ci.sentry.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
@@ -27,14 +28,15 @@ public class Build {
     private final AuditInfo auditInfo;
     private final Type type = Type.BUILD;
 
-    public Build(String id,
-                 String name,
-                 Long run,
-                 Long durationInMillis,
-                 DateTime completedAt,
-                 BuildResult result,
-                 Integer version,
-                 AuditInfo auditInfo) {
+    @JsonCreator
+    public Build(@JsonProperty("_id") String id,
+                 @JsonProperty("name") String name,
+                 @JsonProperty("run") Long run,
+                 @JsonProperty("durationInMillis") Long durationInMillis,
+                 @JsonProperty("completedAt") DateTime completedAt,
+                 @JsonProperty("result") BuildResult result,
+                 @JsonProperty("version") Integer version,
+                 @JsonProperty("auditInfo") AuditInfo auditInfo) {
         this.id = id;
         this.revision = null;
         this.name = name;
@@ -44,5 +46,9 @@ public class Build {
         this.result = result;
         this.version = version;
         this.auditInfo = auditInfo;
+    }
+
+    public boolean failed() {
+        return result == BuildResult.FAILED;
     }
 }

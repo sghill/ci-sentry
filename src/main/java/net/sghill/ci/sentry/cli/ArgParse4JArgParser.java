@@ -36,6 +36,8 @@ public class ArgParse4JArgParser implements ArgParser<ArgumentParser> {
         subparsers.addParser("record")
                 .setDefault(CMD, Command.RECORD)
                 .help(RecordBuildsAction.HELP);
+        subparsers.addParser("report")
+                .setDefault(CMD, Command.REPORT);
         return parser;
     }
 }

@@ -5,6 +5,7 @@ import net.sghill.ci.sentry.FileSystem;
 import net.sghill.ci.sentry.cli.actions.init.InitConfigResult;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -14,7 +15,7 @@ public class YamlConfigurationWriter implements ConfigurationWriter {
     private final SentryConfiguration configuration;
 
     @Inject
-    public YamlConfigurationWriter(FileSystem fileSystem, ObjectMapper objectMapper, SentryConfiguration configuration) {
+    public YamlConfigurationWriter(FileSystem fileSystem, @Named("YAML") ObjectMapper objectMapper, SentryConfiguration configuration) {
         this.fileSystem = fileSystem;
         this.objectMapper = objectMapper;
         this.configuration = configuration;

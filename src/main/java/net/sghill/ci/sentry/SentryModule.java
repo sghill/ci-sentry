@@ -25,6 +25,8 @@ import net.sghill.ci.sentry.cli.actions.ping.PingAction;
 import net.sghill.ci.sentry.cli.actions.ping.PingResult;
 import net.sghill.ci.sentry.cli.actions.ping.PingResultFormatter;
 import net.sghill.ci.sentry.cli.actions.record.RecordBuildsAction;
+import net.sghill.ci.sentry.cli.actions.report.FailuresReportAction;
+import net.sghill.ci.sentry.cli.actions.report.StatsFormatter;
 import net.sghill.ci.sentry.config.*;
 import net.sghill.ci.sentry.domain.BuildRepository;
 import org.ektorp.CouchDbConnector;
@@ -41,6 +43,7 @@ import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import retrofit.converter.JacksonConverter;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
@@ -53,6 +56,7 @@ import java.util.concurrent.ForkJoinPool;
 @Module(injects = {
                 BuildRepository.class,
                 ArgParse4JArgParser.class,
+                FailuresReportAction.class,
                 InitAction.class,
                 InitDbAction.class,
                 InitConfigAction.class,
@@ -82,13 +86,11 @@ public class SentryModule {
     }
 
     @Provides
-    CouchDbConnector providesCouchDbConnector(SentryConfiguration.CouchDb config) {
+    CouchDbConnector providesCouchDbConnector(SentryConfiguration.CouchDb config, @Named("JSON") final ObjectMapper mapper) {
         try {
             HttpClient client = new StdHttpClient.Builder()
                     .url(config.getBaseUrl())
                     .build();
-            final ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new CouchDbSerializationModule());
             return new StdCouchDbConnector("sentry", new StdCouchDbInstance(client), new ObjectMapperFactory() {
                 @Override
                 public ObjectMapper createObjectMapper() {
@@ -136,9 +138,16 @@ public class SentryModule {
         return Validation.byProvider(HibernateValidator.class).configure().buildValidatorFactory();
     }
 
-    @Provides @Singleton
-    ObjectMapper providesObjectMapper() {
+    @Provides @Singleton @Named("YAML")
+    ObjectMapper providesYamlObjectMapper() {
         return new ObjectMapper(new YAMLFactory());
+    }
+
+    @Provides @Singleton @Named("JSON")
+    ObjectMapper providesJsonObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new CouchDbSerializationModule());
+        return mapper;
     }
 
     @Provides @Singleton
@@ -239,12 +248,18 @@ public class SentryModule {
     }
 
     @Provides @Singleton
-    Map<Command, Runnable> providesActionFactory(InitAction init, PingAction ping, RecordBuildsAction record) {
+    Map<Command, Runnable> providesActionFactory(InitAction init, PingAction ping, RecordBuildsAction record, FailuresReportAction report) {
         return ImmutableMap.of(
                 Command.INIT, init,
                 Command.PING, ping,
-                Command.RECORD, record
+                Command.RECORD, record,
+                Command.REPORT, report
         );
+    }
+
+    @Provides
+    StatsFormatter providesStatsFormatter() {
+        return new StatsFormatter();
     }
 
     @Provides
