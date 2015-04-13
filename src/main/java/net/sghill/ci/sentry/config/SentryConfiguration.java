@@ -8,18 +8,19 @@ import org.hibernate.validator.constraints.URL;
 import retrofit.RestAdapter;
 
 import javax.validation.Valid;
+import java.util.Set;
 
 @Getter
 @ToString
 public class SentryConfiguration {
     @Valid
-    private final Server server;
+    private final Set<Server> servers;
     @Valid
     private final CouchDb couchdb;
 
-    public SentryConfiguration(@JsonProperty("server") Server server,
+    public SentryConfiguration(@JsonProperty("servers") Set<Server> servers,
                                @JsonProperty("couchdb") CouchDb couchdb) {
-        this.server = server;
+        this.servers = servers;
         this.couchdb = couchdb;
     }
 

@@ -1,5 +1,6 @@
 package net.sghill.ci.sentry.cli.actions.record;
 
+import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import net.sghill.ci.jenkins.api.JenkinsJob;
 import net.sghill.ci.jenkins.translation.JobTranslator;
@@ -17,15 +18,15 @@ import java.util.concurrent.RecursiveAction;
 public class RecordBuildsAction implements Runnable {
     public static final String HELP = "save status of all builds";
     private final Logger logger;
-    private final JenkinsService jenkins;
+    private final Iterable<JenkinsService> jenkinsServices;
     private final JobTranslator translator;
     private final ForkJoinPool pool;
     private final CouchDbConnector couchDb;
 
     @Inject
-    public RecordBuildsAction(Logger logger, JenkinsService jenkins, JobTranslator translator, ForkJoinPool pool, CouchDbConnector couchDb) {
+    public RecordBuildsAction(Logger logger, Iterable<JenkinsService> jenkinsServices, JobTranslator translator, ForkJoinPool pool, CouchDbConnector couchDb) {
         this.logger = logger;
-        this.jenkins = jenkins;
+        this.jenkinsServices = jenkinsServices;
         this.translator = translator;
         this.pool = pool;
         this.couchDb = couchDb;
@@ -33,7 +34,10 @@ public class RecordBuildsAction implements Runnable {
 
     @Override
     public void run() {
-        List<JenkinsJob> jobs = jenkins.fetchAllJobs().getJobs();
+        List<JenkinsJob> jobs = Lists.newArrayList();
+        for (JenkinsService j : jenkinsServices) {
+            jobs.addAll(j.fetchAllJobs().getJobs());
+        }
         logger.info("Found {} jobs", jobs.size());
         pool.invoke(new RecursiveBuildsAction(jobs, logger, translator, couchDb));
     }

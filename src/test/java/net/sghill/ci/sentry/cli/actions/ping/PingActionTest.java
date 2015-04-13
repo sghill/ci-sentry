@@ -48,7 +48,7 @@ public class PingActionTest {
                 .build();
         given(jenkins.ping()).willReturn(new Response("http://jenkins/", 200, "OK", Lists.<Header>newArrayList(), null));
         given(dbPingCall.execute()).willReturn(response);
-        PingAction action = new PingAction(jenkins, dbPingCall, formatter, logger);
+        PingAction action = new PingAction(Lists.newArrayList(jenkins), dbPingCall, formatter, logger);
         Set<PingResult> expectedArguments = Sets.newHashSet(
                 new PingResult(new URL("http://jenkins/"), PingKind.CI, true),
                 new PingResult(new URL("http://db/"), PingKind.DB, false));

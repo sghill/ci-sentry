@@ -50,6 +50,7 @@ import javax.validation.ValidatorFactory;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 
@@ -193,13 +194,16 @@ public class SentryModule {
     }
 
     @Provides
-    JenkinsService providesRestAdapter(RestAdapter.Builder builder, SentryConfiguration configuration) {
-        SentryConfiguration.Server server = configuration.getServer();
-        return builder
-                .setEndpoint(server.getBaseUrl())
-                .setLogLevel(RestAdapter.LogLevel.valueOf(server.getRestLogLevel()))
-                .build()
-                .create(JenkinsService.class);
+    Iterable<JenkinsService> providesRestAdapter(RestAdapter.Builder builder, SentryConfiguration configuration) {
+        List<JenkinsService> services = Lists.newArrayList();
+        for (SentryConfiguration.Server server : configuration.getServers()) {
+            services.add(builder
+                    .setEndpoint(server.getBaseUrl())
+                    .setLogLevel(RestAdapter.LogLevel.valueOf(server.getRestLogLevel()))
+                    .build()
+                    .create(JenkinsService.class));
+        }
+        return services;
     }
 
     @Provides
