@@ -13,9 +13,10 @@ public class EnumerationValidator implements ConstraintValidator<Enumeration, St
     @Override
     public void initialize(Enumeration at) {
         Class<? extends Enum<?>> givenEnum = at.of();
-        Set<Enum<?>> enums = Sets.newHashSet(givenEnum.getEnumConstants());
-        for (Enum<?> anEnum : enums) {
-            validNames.add(anEnum.name());
+        Enum<?>[] enumConstants = givenEnum.getEnumConstants();
+        Set<Enum<?>> enums = Sets.newHashSet(enumConstants);
+        for (Enum<?> e : enums) {
+            validNames.add(e.name());
         }
     }
 
