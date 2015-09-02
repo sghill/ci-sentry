@@ -27,8 +27,8 @@
         <jackson.version>2.3.3</jackson.version>
         <logback.version>1.1.2</logback.version>
         <lombok.version>1.16.0</lombok.version>
-        <okhttp.version>2.2.0</okhttp.version>
-        <retrofit.version>1.7.1</retrofit.version>
+        <okhttp.version>2.5.0</okhttp.version>
+        <retrofit.version>1.9.0</retrofit.version>
         <!-- Test Versions -->
         <assertj.version>1.7.1</assertj.version>
         <junit.version>4.11</junit.version>
