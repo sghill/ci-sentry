@@ -1,0 +1,9 @@
+---
+apt::sources:
+  'gocd':
+    location: 'https://dl.bintray.com/gocd/gocd-deb'
+    repos: 'main'
+    key:
+      id: '9149B0A6173454C7'
+      server: 'pgp.mit.edu'
+
