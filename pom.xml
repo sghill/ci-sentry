@@ -21,10 +21,10 @@
         <!-- Compile Versions -->
         <argparse4j.version>0.4.4</argparse4j.version>
         <dagger.version>1.2.2</dagger.version>
-        <dropwizard.version>0.7.1</dropwizard.version>
+        <dropwizard.version>0.8.4</dropwizard.version>
         <ektorp.version>1.4.2</ektorp.version>
         <guava.version>18.0</guava.version>
-        <jackson.version>2.3.3</jackson.version>
+        <jackson.version>2.5.1</jackson.version>
         <logback.version>1.1.2</logback.version>
         <lombok.version>1.16.0</lombok.version>
         <okhttp.version>2.5.0</okhttp.version>
