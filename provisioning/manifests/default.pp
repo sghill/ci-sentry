@@ -1,28 +1,39 @@
-class gocd($version = '15.2.0-2248') {
-  package { 'go-server':
-    ensure => installed,
-  }
-
-  service { 'go-server':
-    ensure  => running,
-    enabled => true,
-  }
-
-  package { 'go-agent':
-    ensure => installed,
-  }
-
-  service { 'go-agent':
-    ensure  => running,
-    enabled => true,
-  }
-
-  package { 'openjdk-7-jdk':
-    ensure => installed,
-    before => [Package["go-agent-${go_version}"], Package["go-server-${go_version}"]]
-  }
+package { 'openjdk-7-jdk':
+  ensure => installed,
 }
 
-include apt
-include gocd
+package { 'git':
+  ensure => installed,
+}
 
+package { 'go-server':
+  ensure  => installed,
+  require => [Package['openjdk-7-jdk'], Apt::Source['gocd']],
+}
+
+package { 'go-agent':
+  ensure  => installed,
+  require => [Package['openjdk-7-jdk'], Apt::Source['gocd']],
+}
+
+service { 'go-server':
+  ensure  => running,
+  enable  => true,
+  require => Package['go-server'],
+}
+
+service { 'go-agent':
+  ensure  => running,
+  enable  => true,
+  require => Package['go-agent'],
+}
+
+apt::source { 'gocd':
+  location => 'https://dl.bintray.com/gocd/gocd-deb',
+  repos    => 'Release',
+  key      => {
+    id     => '9A439A18CBD07C3FF81BCE759149B0A6173454C7',
+    server => 'pgp.mit.edu',
+  },
+  notify   => Exec['apt_update'],
+}
