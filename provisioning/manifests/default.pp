@@ -1,19 +1,14 @@
-package { 'openjdk-7-jdk':
-  ensure => installed,
-}
-
-package { 'git':
-  ensure => installed,
-}
+include java
+include git
 
 package { 'go-server':
   ensure  => installed,
-  require => [Package['openjdk-7-jdk'], Apt::Source['gocd']],
+  require => [Package['java'], Class['apt::update']],
 }
 
 package { 'go-agent':
   ensure  => installed,
-  require => [Package['openjdk-7-jdk'], Apt::Source['gocd']],
+  require => [Package['java'], Class['apt::update']],
 }
 
 service { 'go-server':
@@ -30,10 +25,11 @@ service { 'go-agent':
 
 apt::source { 'gocd':
   location => 'https://dl.bintray.com/gocd/gocd-deb',
-  repos    => 'Release',
+  release  => '/',
+  repos    => '',
   key      => {
     id     => '9A439A18CBD07C3FF81BCE759149B0A6173454C7',
     server => 'pgp.mit.edu',
   },
-  notify   => Exec['apt_update'],
+  before   => [Package['go-agent'], Package['go-server']],
 }
